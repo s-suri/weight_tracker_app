@@ -1,27 +1,26 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:surichatapp/LoginScreen.dart';
 import 'package:surichatapp/updateScreen.dart';
 
-class WeightRoom extends StatelessWidget {
+class WeightRoom extends StatefulWidget {
+  @override
+  _WeightRoomState createState() => _WeightRoomState();
+}
+
+
+class _WeightRoomState extends State<WeightRoom> {
   final TextEditingController _message = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Map<String, dynamic> userMap;
 
-  void setStatus(String status) async {
-    await _firestore.collection('users').doc(_auth.currentUser.uid).update({
-      "status": status,
-    });
-  }
 
   Future logOut(BuildContext context) async
   {
-
     FirebaseAuth auth = FirebaseAuth.instance;
 
     try{
@@ -75,9 +74,7 @@ class WeightRoom extends StatelessWidget {
   }
 
 
-   Future deleteItem() async {
 
-   }
 
   @override
   Widget build(BuildContext context) {
