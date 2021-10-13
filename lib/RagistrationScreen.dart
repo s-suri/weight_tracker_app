@@ -21,12 +21,13 @@ class RagistrationScreenState extends State<RagistrationScreen>
   FirebaseAuth _auth = FirebaseAuth.instance;
   GlobalKey<FormState> keyForm = new GlobalKey();
 
-  Future CreateAccount() async
+  Future<User> CreateAccount() async
   {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     try
     {
-      await _auth.createUserWithEmailAndPassword(
+      print("1");
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: _email.text.toString(), password: _password.text.toString());
 
       debugPrint("Account create Successfull");
@@ -34,18 +35,19 @@ class RagistrationScreenState extends State<RagistrationScreen>
       _firestore.collection('users')
           .doc(_auth.currentUser.uid)
           .set({
-               "name":_name.text.toString(),
-               "email":_email.text.toString(),
-               "status": "Unavailable",
-               "uid":_auth.currentUser.uid
+        "name":_name.text.toString(),
+        "email":_email.text.toString(),
+        "status": "Unavailable",
+        "uid":_auth.currentUser.uid
       });
 
-
-      Navigator.push(context, MaterialPageRoute(builder: (_) => WeightRoom()));
+      return userCredential.user;
     }
     catch(e)
     {
       print(e);
+
+      debugPrint("ramesh");
       return null;
     }
   }
@@ -84,7 +86,7 @@ class RagistrationScreenState extends State<RagistrationScreen>
             Container(
               alignment: Alignment.center,
               child: Text(
-                "Welcome to the Weight App", style: TextStyle(
+                "Welcome to the WhatsApp", style: TextStyle(
                   fontSize: 20,
                   color: Colors.white
               ),
@@ -110,143 +112,153 @@ class RagistrationScreenState extends State<RagistrationScreen>
                 child: Padding(
                   padding: EdgeInsets.all(5),
                   child: Form(
-                    key: keyForm,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20,),
-                          Container(
-                            margin: EdgeInsets.only(top: 20,left: 10,right: 20),
-                            child: TextFormField(
-                              controller: _name,
-                              validator: (value){
-                                if(value.isEmpty)
+                      key: keyForm,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Container(
+                              margin: EdgeInsets.only(top: 20,left: 10,right: 20),
+                              child: TextFormField(
+                                controller: _name,
+                                validator: (value){
+                                  if(value.isEmpty)
                                   {
                                     return 'Please Enter name';
                                   }
-                              },
+                                },
 
-                              style: TextStyle(
-                                  color: Colors.black
-                              ),
+                                style: TextStyle(
+                                    color: Colors.black
+                                ),
 
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: "Enter Name",
-                                  labelText: "Name"
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: "Enter Name",
+                                    labelText: "Name"
+                                ),
                               ),
                             ),
-                          ),
 
-                          SizedBox(height: 15,),
+                            SizedBox(height: 15,),
 
-                          Container(
-                            margin: EdgeInsets.only(top: 20,left: 10,right: 20),
-                            child: TextFormField(
-                              controller: _email,
-                              validator: (value){
-                                if(value.isEmpty)
+                            Container(
+                              margin: EdgeInsets.only(top: 20,left: 10,right: 20),
+                              child: TextFormField(
+                                controller: _email,
+                                validator: (value){
+                                  if(value.isEmpty)
                                   {
                                     return 'Please Enter Email';
                                   }
-                              },
+                                },
 
-                              style: TextStyle(
-                                  color: Colors.black
-                              ),
+                                style: TextStyle(
+                                    color: Colors.black
+                                ),
 
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: "Enter Email",
-                                  labelText: "Email"
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: "Enter Email",
+                                    labelText: "Email"
+                                ),
                               ),
                             ),
-                          ),
 
-                          SizedBox(height: 15,),
+                            SizedBox(height: 15,),
 
 
-                          Container(
-                            margin: EdgeInsets.only(top: 20,left: 10,right: 20),
-                            child: TextFormField(
-                              controller: _password,
-                              validator: (value){
-                                if(value.isEmpty)
+                            Container(
+                              margin: EdgeInsets.only(top: 20,left: 10,right: 20),
+                              child: TextFormField(
+                                controller: _password,
+                                obscureText: true,
+                                validator: (value){
+                                  if(value.isEmpty)
                                   {
                                     return 'Please Enter Password';
                                   }
 
-                              },
+                                },
 
-                              style: TextStyle(
-                                  color: Colors.black
-                              ),
+                                style: TextStyle(
+                                    color: Colors.black
+                                ),
 
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: "Enter Password",
-                                  labelText: "Password"
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: "Enter Password",
+                                    labelText: "Password"
+                                ),
                               ),
                             ),
-                          ),
 
-                          SizedBox(height: 15,),
+                            SizedBox(height: 15,),
 
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [
-                                    Colors.blue,
-                                    Colors.blue,
-                                  ]
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Colors.blue,
+                                      Colors.blue,
+                                    ]
+                                ),
+
+                                borderRadius: BorderRadius.all(Radius.circular(7)),
+
                               ),
-
-                              borderRadius: BorderRadius.all(Radius.circular(7)),
-
-                            ),
-                            child: RaisedButton(
-                              color: Colors.blue,
-                              child: Text("Submit", style: TextStyle(
-                                  color: Colors.white
-                              ),
-                              ),
-                              onPressed: (){
-                                if(keyForm.currentState.validate())
+                              child: RaisedButton(
+                                color: Colors.blue,
+                                child: Text("Submit", style: TextStyle(
+                                    color: Colors.white
+                                ),
+                                ),
+                                onPressed: (){
+                                  if(keyForm.currentState.validate())
                                   {
-                                    CreateAccount();
+                                    CreateAccount()
+                                        .then((user) {
+                                      if(user != null)
+                                      {
+                                        Navigator.push(context, MaterialPageRoute(builder:(_) => WeightRoom()));
+                                      }
+                                    });
                                   }
-                              },
-                            ),
-                          ),
 
-                          SizedBox(height: 30,),
 
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [
-                                    Colors.white,
-                                    Colors.white,
-                                  ]
+                                },
+
                               ),
-
-                              borderRadius: BorderRadius.all(Radius.circular(7)),
-
                             ),
-                            child: RaisedButton(
-                              color: Colors.white,
-                              child: Text("Open Login Page", style: TextStyle(
-                                  color: Colors.black
+
+                            SizedBox(height: 30,),
+
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white,
+                                      Colors.white,
+                                    ]
+                                ),
+
+                                borderRadius: BorderRadius.all(Radius.circular(7)),
+
                               ),
+                              child: RaisedButton(
+                                color: Colors.white,
+                                child: Text("Open Login Page", style: TextStyle(
+                                    color: Colors.black
+                                ),
+                                ),
+                                onPressed: (){
+                                  Navigator.push(context, MaterialPageRoute(builder:(_) => LoginScreen()));
+                                },
                               ),
-                              onPressed: (){
-                                Navigator.push(context, MaterialPageRoute(builder:(_) => LoginScreen()));
-                              },
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                          ],
+                        ),
+                      )
                   ),
                 ),
               ),
